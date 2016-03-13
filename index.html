@@ -258,16 +258,24 @@
 <p>在ARC下会自动添加 autorelease 会自动copy到堆上，有一种场景是不会给自动添加copy的</p>
 </li>
 </ul>
-<pre><code>-(id) getBlockArray{  
-        int val =10;  
+<pre><code>-(id) getBlockArray {  
+        int val = 10;   
         return [NSArray arrayWithObjects:  
     ^{NSLog(@&quot;blk0:%d&quot;,val);},  
-    ^{NSLog(@&quot;blk1:%d&quot;,val);},nil];  
-}  
+    ^{NSLog(@&quot;blk1:%d&quot;,val);}, nil];  
+}   
 id obj = getBlockArray();  
 typedef void (^blk_t)(void);  
 blk_t blk = (blk_t){obj objectAtIndex:0};  
 blk(); 
+
+正确改法：
+-(id) getBlockArray {  
+        int val =10;  
+        return [NSArray arrayWithObjects:[^{NSLog(@&quot;blk0:%d&quot;,val);} copy],
+                 [^{NSLog(@&quot;blk1:%d&quot;,val);} copy],nil];
+
+}  
 </code></pre><p>这段代码在最后一行blk()会异常，因为数组中的block是栈上的。因为val是栈上的。解决办法就是调用    copy方法。这种场景，ARC也不会为你添加copy，因为ARC不确定，采取了保守的措施：不添加copy。所以    ARC下也是会异常退出。</p>
 <p>  注意：</p>
 <ul>
