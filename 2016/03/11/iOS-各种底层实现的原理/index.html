@@ -4,36 +4,48 @@
   <meta charset="utf-8">
   
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
-  <title>Hexo 3.0 部署到github遇到的坑 | rocklong</title>
+  <title>iOS 各种底层实现的原理 | rocklong</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="升级至Hexo 3.0版本后
-1.需要安装对应的deploy模块
-  命令为：        
-npm install hexo-deployer-git --save //将git替换为别的名字就可以安装对应模块
-2.然后对_config.yml做如下设置
-deploy:
-  type: git // 非git请参考官方文档中的设置 需要注意的是分号后面需要有空格，这是区别3.0">
+  <meta name="description" content="KVO 内部实现原理
+
+ 1.KVO 是基于runtime机制实现的.
+
+2. 当某个类的对象第一次被观察时,系统就会在运行期动态的创建该类的一个派生类
+
+,在这个派生类中重写基类中任何被观察属性的setter方法; 派生类在被重写的setter方法中
+
+实现真正的通知机制 (Person-&amp;gt;NSKVONotifying_Person)
+2 . __weak 内部原理
+ (1).从weak">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Hexo 3.0 部署到github遇到的坑">
-<meta property="og:url" content="http://rocklong.github.io/2016/03/10/Hexo-3-0-部署到github遇到的坑/index.html">
+<meta property="og:title" content="iOS 各种底层实现的原理">
+<meta property="og:url" content="http://rocklong.github.io/2016/03/11/iOS-各种底层实现的原理/index.html">
 <meta property="og:site_name" content="rocklong">
-<meta property="og:description" content="升级至Hexo 3.0版本后
-1.需要安装对应的deploy模块
-  命令为：        
-npm install hexo-deployer-git --save //将git替换为别的名字就可以安装对应模块
-2.然后对_config.yml做如下设置
-deploy:
-  type: git // 非git请参考官方文档中的设置 需要注意的是分号后面需要有空格，这是区别3.0">
-<meta property="og:updated_time" content="2016-03-10T05:57:59.000Z">
+<meta property="og:description" content="KVO 内部实现原理
+
+ 1.KVO 是基于runtime机制实现的.
+
+2. 当某个类的对象第一次被观察时,系统就会在运行期动态的创建该类的一个派生类
+
+,在这个派生类中重写基类中任何被观察属性的setter方法; 派生类在被重写的setter方法中
+
+实现真正的通知机制 (Person-&amp;gt;NSKVONotifying_Person)
+2 . __weak 内部原理
+ (1).从weak">
+<meta property="og:updated_time" content="2016-03-13T04:18:16.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Hexo 3.0 部署到github遇到的坑">
-<meta name="twitter:description" content="升级至Hexo 3.0版本后
-1.需要安装对应的deploy模块
-  命令为：        
-npm install hexo-deployer-git --save //将git替换为别的名字就可以安装对应模块
-2.然后对_config.yml做如下设置
-deploy:
-  type: git // 非git请参考官方文档中的设置 需要注意的是分号后面需要有空格，这是区别3.0">
+<meta name="twitter:title" content="iOS 各种底层实现的原理">
+<meta name="twitter:description" content="KVO 内部实现原理
+
+ 1.KVO 是基于runtime机制实现的.
+
+2. 当某个类的对象第一次被观察时,系统就会在运行期动态的创建该类的一个派生类
+
+,在这个派生类中重写基类中任何被观察属性的setter方法; 派生类在被重写的setter方法中
+
+实现真正的通知机制 (Person-&amp;gt;NSKVONotifying_Person)
+2 . __weak 内部原理
+ (1).从weak">
   
     <link rel="alternative" href="/atom.xml" title="rocklong" type="application/atom+xml">
   
@@ -219,11 +231,11 @@ deploy:
 	</div>
 </nav>
 
-      <div class="body-wrap"><article id="post-Hexo-3-0-部署到github遇到的坑" class="article article-type-post" itemscope itemprop="blogPost">
+      <div class="body-wrap"><article id="post-iOS-各种底层实现的原理" class="article article-type-post" itemscope itemprop="blogPost">
   
     <div class="article-meta">
-      <a href="/2016/03/10/Hexo-3-0-部署到github遇到的坑/" class="article-date">
-  	<time datetime="2016-03-10T05:39:15.000Z" itemprop="datePublished">2016-03-10</time>
+      <a href="/2016/03/11/iOS-各种底层实现的原理/" class="article-date">
+  	<time datetime="2016-03-11T09:58:18.000Z" itemprop="datePublished">2016-03-11</time>
 </a>
     </div>
   
@@ -236,7 +248,7 @@ deploy:
         
   
     <h1 class="article-title" itemprop="name">
-      Hexo 3.0 部署到github遇到的坑
+      iOS 各种底层实现的原理
     </h1>
   
 
@@ -252,18 +264,58 @@ deploy:
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>升级至Hexo 3.0版本后</p>
-<p>1.需要安装对应的deploy模块</p>
-<p>  命令为：        </p>
-<pre><code>npm install hexo-deployer-git --save //将git替换为别的名字就可以安装对应模块
-</code></pre><p>2.然后对_config.yml做如下设置</p>
-<pre><code>deploy:
-  type: git // 非git请参考官方文档中的设置 需要注意的是分号后面需要有空格，这是区别3.0        以前
-  repository: git@github.com:rocklong/rocklong.github.io.git
-  branch: master 
-</code></pre><p>3.附上快捷工具</p>
-<p><a href="http://ibruce.info/2013/11/26/markdown/" target="_blank" rel="external">markdown简明语法</a>  </p>
-<p><a href="http://ijiaober.github.io/categories/hexo/" target="_blank" rel="external">Hexo 使用攻略</a></p>
+        <ol>
+<li>KVO 内部实现原理</li>
+</ol>
+<pre><code> 1.KVO 是基于runtime机制实现的.
+
+2. 当某个类的对象第一次被观察时,系统就会在运行期动态的创建该类的一个派生类
+
+,在这个派生类中重写基类中任何被观察属性的setter方法; 派生类在被重写的setter方法中
+
+实现真正的通知机制 (Person-&gt;NSKVONotifying_Person)
+</code></pre><p>2 . __weak 内部原理</p>
+<pre><code> (1).从weak 表中获取废弃对象的地址为键值的记录。
+
+（2).将包含在记录中的所有附有__weak 修饰符变量的地址，赋值为nil。
+
+（3).从weak 表中删除该记录。
+
+（4).从引用计数表中删除废弃对象的地址为键值的记录。
+</code></pre><p>3.block 的哪些事</p>
+<p> 1.Block和函数的相似性：（1）可以保存代码（2）有返回值（3）有形参（4）调用方式一样。</p>
+<p> 2.加__block 就可以修改外部变量的值，其本质就是传值（不加）和传址（加）的区别  </p>
+<p> 3.Block 分：栈block，全局block，堆block，分别对应</p>
+<ul>
+<li>_NSConcretStackBlock</li>
+<li>_NSConcretGlobalBlock</li>
+<li><p>_NSConcretMallocBlock</p>
+<p>栈block:</p>
+<p>在ARC下会自动添加 autorelease 会自动copy到堆上，有一种场景是不会给自动添加copy的</p>
+</li>
+</ul>
+<pre><code>-(id) getBlockArray{  
+        int val =10;  
+        return [NSArray arrayWithObjects:  
+    ^{NSLog(@&quot;blk0:%d&quot;,val);},  
+    ^{NSLog(@&quot;blk1:%d&quot;,val);},nil];  
+}  
+id obj = getBlockArray();  
+typedef void (^blk_t)(void);  
+blk_t blk = (blk_t){obj objectAtIndex:0};  
+blk(); 
+</code></pre><p>这段代码在最后一行blk()会异常，因为数组中的block是栈上的。因为val是栈上的。解决办法就是调用    copy方法。这种场景，ARC也不会为你添加copy，因为ARC不确定，采取了保守的措施：不添加copy。所以    ARC下也是会异常退出。</p>
+<p>  注意：</p>
+<ul>
+<li>在栈上调用copy那么复制到堆上</li>
+<li>全局block调用copy什么也不做</li>
+<li><p>在堆上调用block 引用计数增加    </p>
+<p>全局block：</p>
+<p> 定义在函数外面的block是global类型的<br> 定义在函数内部的block，但是没有捕获任何自动变量，那么它也是全局的  </p>
+</li>
+</ul>
+<p>参考： </p>
+<p>  <a href="http://blog.csdn.net/hherima/article/details/38620175" target="_blank" rel="external">block的内存管理如何验证block在栈上还是在堆上</a>     </p>
 
       
     </div>
@@ -273,18 +325,9 @@ deploy:
     
 <nav id="article-nav">
   
-    <a href="/2016/03/11/iOS-各种底层实现的原理/" id="article-nav-newer" class="article-nav-link-wrap">
-      <strong class="article-nav-caption"><</strong>
-      <div class="article-nav-title">
-        
-          iOS 各种底层实现的原理
-        
-      </div>
-    </a>
   
-  
-    <a href="/2016/03/09/hello-world/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">Hello World</div>
+    <a href="/2016/03/10/Hexo-3-0-部署到github遇到的坑/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">Hexo 3.0 部署到github遇到的坑</div>
       <strong class="article-nav-caption">></strong>
     </a>
   
@@ -319,7 +362,7 @@ deploy:
 
 <div class="duoshuo">
 	<!-- 多说评论框 start -->
-	<div class="ds-thread" data-thread-key="Hexo-3-0-部署到github遇到的坑" data-title="Hexo 3.0 部署到github遇到的坑" data-url="http://rocklong.github.io/2016/03/10/Hexo-3-0-部署到github遇到的坑/"></div>
+	<div class="ds-thread" data-thread-key="iOS-各种底层实现的原理" data-title="iOS 各种底层实现的原理" data-url="http://rocklong.github.io/2016/03/11/iOS-各种底层实现的原理/"></div>
 	<!-- 多说评论框 end -->
 	<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
 	<script type="text/javascript">
