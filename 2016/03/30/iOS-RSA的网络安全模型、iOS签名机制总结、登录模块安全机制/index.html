@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" >
+  <title>iOS RSA的网络安全模型、iOS签名机制总结、登录模块安全机制 | 海龙 | 博客</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="本文将针对RSA登录和http请求作讲解，了解 RSA和签名相关的知识
+一.登录、登录保持（http请求）登录机制
+登录机制大概可以分为一下三个阶段：
+
+登录验证：是指客户端提供用户名和密码，向服务器提出登录请求，服务器判断客户端是否可以登录并向客户端确认。
+
+登录保持：是指客户端登录后， 服务器能够分辨出已登录的客户端，并为其持续提供登录权限的服务器。
+
+登出：是指客户端主动退出登录状态。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="iOS RSA的网络安全模型、iOS签名机制总结、登录模块安全机制">
+<meta property="og:url" content="http://rocklong.github.io/2016/03/30/iOS-RSA的网络安全模型、iOS签名机制总结、登录模块安全机制/index.html">
+<meta property="og:site_name" content="海龙 | 博客">
+<meta property="og:description" content="本文将针对RSA登录和http请求作讲解，了解 RSA和签名相关的知识
+一.登录、登录保持（http请求）登录机制
+登录机制大概可以分为一下三个阶段：
+
+登录验证：是指客户端提供用户名和密码，向服务器提出登录请求，服务器判断客户端是否可以登录并向客户端确认。
+
+登录保持：是指客户端登录后， 服务器能够分辨出已登录的客户端，并为其持续提供登录权限的服务器。
+
+登出：是指客户端主动退出登录状态。">
+<meta property="og:updated_time" content="2016-03-30T04:02:57.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="iOS RSA的网络安全模型、iOS签名机制总结、登录模块安全机制">
+<meta name="twitter:description" content="本文将针对RSA登录和http请求作讲解，了解 RSA和签名相关的知识
+一.登录、登录保持（http请求）登录机制
+登录机制大概可以分为一下三个阶段：
+
+登录验证：是指客户端提供用户名和密码，向服务器提出登录请求，服务器判断客户端是否可以登录并向客户端确认。
+
+登录保持：是指客户端登录后， 服务器能够分辨出已登录的客户端，并为其持续提供登录权限的服务器。
+
+登出：是指客户端主动退出登录状态。">
+  
+    <link rel="alternative" href="/atom.xml" title="海龙 | 博客" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+  <div id="container">
+    <div class="left-col">
+    <div class="overlay"></div>
+<div class="intrude-less">
+	<header id="header" class="inner">
+		<a href="/" class="profilepic">
+			
+			<img lazy-src="/images/userIcon.jpg" class="js-avatar">
+			
+		</a>
+
+		<hgroup>
+		  <h1 class="header-author"><a href="/">Rock</a></h1>
+		</hgroup>
+
+		
+		<p class="header-subtitle">水深则流缓，语迟则人贵！</p>
+		
+
+		
+			<div class="switch-btn">
+				<div class="icon">
+					<div class="icon-ctn">
+						<div class="icon-wrap icon-house" data-idx="0">
+							<div class="birdhouse"></div>
+							<div class="birdhouse_holes"></div>
+						</div>
+						<div class="icon-wrap icon-ribbon hide" data-idx="1">
+							<div class="ribbon"></div>
+						</div>
+						
+						<div class="icon-wrap icon-link hide" data-idx="2">
+							<div class="loopback_l"></div>
+							<div class="loopback_r"></div>
+						</div>
+						
+						
+						<div class="icon-wrap icon-me hide" data-idx="3">
+							<div class="user"></div>
+							<div class="shoulder"></div>
+						</div>
+						
+					</div>
+					
+				</div>
+				<div class="tips-box hide">
+					<div class="tips-arrow"></div>
+					<ul class="tips-inner">
+						<li>Menu</li>
+						<li>Tags</li>
+						
+						<li>Links</li>
+						
+						
+						<li>Über</li>
+						
+					</ul>
+				</div>
+			</div>
+		
+
+		<div class="switch-area">
+			<div class="switch-wrap">
+				<section class="switch-part switch-part1">
+					<nav class="header-menu">
+						<ul>
+						
+							<li><a href="/">主页</a></li>
+				        
+							<li><a href="/archives">所有文章</a></li>
+				        
+						</ul>
+					</nav>
+					<nav class="header-nav">
+						<div class="social">
+							
+								<a class="github" target="_blank" href="#" title="github">github</a>
+					        
+								<a class="weibo" target="_blank" href="#" title="weibo">weibo</a>
+					        
+								<a class="rss" target="_blank" href="#" title="rss">rss</a>
+					        
+								<a class="zhihu" target="_blank" href="#" title="zhihu">zhihu</a>
+					        
+						</div>
+					</nav>
+				</section>
+				
+				
+				<section class="switch-part switch-part2">
+					<div class="widget tagcloud" id="js-tagcloud">
+						
+					</div>
+				</section>
+				
+				
+				
+				<section class="switch-part switch-part3">
+					<div id="js-friends">
+					
+			          <a target="_blank" class="main-nav-link switch-friends-link" href="http://localhost:4000/">奥巴马的博客</a>
+			        
+			          <a target="_blank" class="main-nav-link switch-friends-link" href="http://localhost:4000/">卡卡的美丽传说</a>
+			        
+			          <a target="_blank" class="main-nav-link switch-friends-link" href="http://localhost:4000/">本泽马的博客</a>
+			        
+			          <a target="_blank" class="main-nav-link switch-friends-link" href="http://localhost:4000/">吉格斯的博客</a>
+			        
+			          <a target="_blank" class="main-nav-link switch-friends-link" href="http://localhost:4000/">习大大大不同</a>
+			        
+			          <a target="_blank" class="main-nav-link switch-friends-link" href="http://localhost:4000/">托蒂的博客</a>
+			        
+			        </div>
+				</section>
+				
+
+				
+				
+				<section class="switch-part switch-part4">
+				
+					<div id="js-aboutme">我是谁，我从哪里来，我到哪里去？我就是我，是颜色不一样的吃货…</div>
+				</section>
+				
+			</div>
+		</div>
+	</header>				
+</div>
+
+    </div>
+    <div class="mid-col">
+      <nav id="mobile-nav">
+  	<div class="overlay">
+  		<div class="slider-trigger"></div>
+  		<h1 class="header-author js-mobile-header hide">Rock</h1>
+  	</div>
+	<div class="intrude-less">
+		<header id="header" class="inner">
+			<div class="profilepic">
+			
+				<img lazy-src="/images/userIcon.jpg" class="js-avatar">
+			
+			</div>
+			<hgroup>
+			  <h1 class="header-author">Rock</h1>
+			</hgroup>
+			
+			<p class="header-subtitle">水深则流缓，语迟则人贵！</p>
+			
+			<nav class="header-menu">
+				<ul>
+				
+					<li><a href="/">主页</a></li>
+		        
+					<li><a href="/archives">所有文章</a></li>
+		        
+		        <div class="clearfix"></div>
+				</ul>
+			</nav>
+			<nav class="header-nav">
+				<div class="social">
+					
+						<a class="github" target="_blank" href="#" title="github">github</a>
+			        
+						<a class="weibo" target="_blank" href="#" title="weibo">weibo</a>
+			        
+						<a class="rss" target="_blank" href="#" title="rss">rss</a>
+			        
+						<a class="zhihu" target="_blank" href="#" title="zhihu">zhihu</a>
+			        
+				</div>
+			</nav>
+		</header>				
+	</div>
+</nav>
+
+      <div class="body-wrap"><article id="post-iOS-RSA的网络安全模型、iOS签名机制总结、登录模块安全机制" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2016/03/30/iOS-RSA的网络安全模型、iOS签名机制总结、登录模块安全机制/" class="article-date">
+  	<time datetime="2016-03-30T01:05:21.000Z" itemprop="datePublished">2016-03-30</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      iOS RSA的网络安全模型、iOS签名机制总结、登录模块安全机制
+    </h1>
+  
+
+      </header>
+      
+      <div class="article-info article-info-post">
+        
+        
+
+        <div class="clearfix"></div>
+      </div>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>本文将针对RSA登录和http请求作讲解，了解 RSA和签名相关的知识</p>
+<h2 id="一-登录、登录保持（http请求）"><a href="#一-登录、登录保持（http请求）" class="headerlink" title="一.登录、登录保持（http请求）"></a>一.登录、登录保持（http请求）</h2><h3 id="登录机制"><a href="#登录机制" class="headerlink" title="登录机制"></a>登录机制</h3><blockquote>
+<p>登录机制大概可以分为一下三个阶段：</p>
+<ol>
+<li><p>登录验证：是指客户端提供用户名和密码，向服务器提出登录请求，服务器判断客户端是否可以登录并向客户端确认。</p>
+</li>
+<li><p>登录保持：是指客户端登录后， 服务器能够分辨出已登录的客户端，并为其持续提供登录权限的服务器。</p>
+</li>
+<li><p>登出：是指客户端主动退出登录状态。</p>
+</li>
+</ol>
+</blockquote>
+<h3 id="第一种网络请求情况（安全级别：II）"><a href="#第一种网络请求情况（安全级别：II）" class="headerlink" title="第一种网络请求情况（安全级别：II）"></a>第一种网络请求情况（安全级别：II）</h3><blockquote>
+<p>一般的情况是这个样子的：一但用户登陆成功（单方面MD5加密：服务器加密则客户端不加密，客户端加密则明文传输），服务器为客户端分配sessionID(也可以称为userID),当然有些服务器不但为客户端分配了userID还有可能会为用户提供token了(这个下面会做解释)，然后每次网络请求都将sessionID当做参数传递给服务器</p>
+</blockquote>
+<h3 id="优点"><a href="#优点" class="headerlink" title="优点"></a>优点</h3><blockquote>
+<p>能够保持用户登录状态、区分用户，相对于不返回任何信息的登录要安全了一些.</p>
+</blockquote>
+<h3 id="缺点"><a href="#缺点" class="headerlink" title="缺点"></a>缺点</h3><blockquote>
+<p>如果通过网络嗅探器（例如：青花瓷）可以获取到http链接，这样子服务器返回的sessionID便会被获取到，这样子依然会造成信息泄露，并且还能被伪造请求（浏览器请求）。</p>
+</blockquote>
+<h3 id="第二种网络请求情况-（安全级别：III）"><a href="#第二种网络请求情况-（安全级别：III）" class="headerlink" title="第二种网络请求情况 （安全级别：III）"></a>第二种网络请求情况 （安全级别：III）</h3><blockquote>
+<p>第一种存在明显的安全隐患，但是目前市面上的好多app依然采用第一种方法去实现登录、网络请求，但是对于安全级别较高的app，已经不再适用了。所以在此基础上进行优化—-采用非对称加密（公钥、私钥）。</p>
+</blockquote>
+<h3 id="登录模型"><a href="#登录模型" class="headerlink" title="登录模型"></a>登录模型</h3><blockquote>
+<p>客户端第一次发出登录请求时， 用户密码以明文的方式传输， 一旦被截获， 后果严重。因此密码需要加密，例如可采用RSA非对称加密。具体流程如下：</p>
+<p>客户端向服务器第一次发起登录请求（不传输用户名和密码）。<br>服务器利用RSA算法产生一对公钥和私钥。并保留私钥， 将公钥发送给客户端。</p>
+<p>客户端收到公钥后， 加密用户密码， 向服务器发起第二次登录请求（传输用户名和加密后的密码）。</p>
+<p>服务器利用保留的私钥对密文进行解密，得到真正的密码。</p>
+</blockquote>
+<h3 id="第三种网络请求情况（安全级别：IIII）"><a href="#第三种网络请求情况（安全级别：IIII）" class="headerlink" title="第三种网络请求情况（安全级别：IIII）"></a>第三种网络请求情况（安全级别：IIII）</h3><blockquote>
+<p>再仔细核对上述登录流程， 我们发现服务器判断用户是否登录， 完全依赖于sessionId, 一旦其被截获， 黑客就能够模拟出用户的请求。于是我们需要引入token的概念： 用户登录成功后， 服务器不但为其分配了sessionId, 还分配了token， token是维持登录状态的关键秘密数据。在服务器向客户端发送的token数据，也需要加密。于是一次登录的细节再次扩展。</p>
+<p>客户端向服务器第一次发起登录请求（不传输用户名和密码）。<br>服务器利用RSA算法产生一对公钥和私钥。并保留私钥， 将公钥发送给客户端。</p>
+<p>客户端收到公钥后， 加密用户密码，向服务器发送用户名和加密后的用户密码； 同时另外产生一对公钥和私钥，自己保留私钥, 向服务器发送公钥； 于是第二次登录请求传输了用户名和加密后的密码以及客户端生成的公钥。</p>
+<p>服务器利用保留的私钥对密文进行解密，得到真正的密码。 经过判断， 确定用户可以登录后，生成sessionId和token， 同时利用客户端发送的公钥，对token进行加密。最后将sessionId和加密后的token返还给客户端。</p>
+<p>客户端利用自己生成的私钥对token密文解密， 得到真正的token。</p>
+</blockquote>
+<h3 id="登录保持（也就是http数据请求阶段）"><a href="#登录保持（也就是http数据请求阶段）" class="headerlink" title="登录保持（也就是http数据请求阶段）"></a>登录保持（也就是http数据请求阶段）</h3><blockquote>
+<p>引入token后，http请求被获取问题便可得到解决。 服务器将token和其它的一些变量， 利用散列加密算法得到签名后，连同sessionId一并发送给服务器； 服务器取出保存于服务器端的token,利用相同的法则生成校验签名， 如果客户端签名与服务器的校验签名一致， 就认为请求来自登录的客户端。（支付宝一样的机制）</p>
+</blockquote>
+<pre><code>注：token失效的两种情况：
+
+1. 用户登录出系统
+2. token在后台的规定时间内失效（每个token都是有时间效应的）
+
+失效原理：
+在服务器端的redis中删除相应key为session的键值对
+</code></pre><h3 id="二-散列算法"><a href="#二-散列算法" class="headerlink" title="二.散列算法"></a>二.散列算法</h3><blockquote>
+<p>散列是信息的提炼，通常其长度要比信息小得多，且为一个固定长度。加密性强的散列一定是不可逆的，这就意味着通过散列结果，无法推出任何部分的原始信息。任何输入信息的变化，哪怕仅一位，都将导致散列结果的明显变化，这称之为雪崩效应。散列还应该是防冲突的，即找不出具有相同散列结果的两条信息。具有这些特性的散列结果就可以用于验证信息是否被修改。</p>
+<p>散列算法可以用来加密token生成签名， 以便token信息不暴露在网络同时还能验证登录的有效性。    </p>
+</blockquote>
+<h3 id="MD5"><a href="#MD5" class="headerlink" title="MD5"></a>MD5</h3><pre><code>全写： Message Digest Algorithm MD5（中文名为消息摘要算法第五版）
+    输出： 128bit
+
+MD5算法具有以下特点：
+
+1、压缩性：任意长度的数据，算出的MD5值长度都是固定的。
+2、容易计算：从原数据计算出MD5值很容易。
+3、抗修改性：对原数据进行任何改动，哪怕只修改1个字节，所得到的MD5值都有很大区别。
+4、弱抗碰撞：已知原数据和其MD5值，想找到一个具有相同MD5值的数据（即伪造数据）是非常困难的。
+5、强抗碰撞：想找到两个不同的数据，使它们具有相同的MD5值，是非常困难的。
+
+缺陷：Md5一度被认为十分靠谱。2004年8月17日的美国加州圣巴巴拉的国际密码学会议（Crypto’2004）上，来自中国山东大学的王小云教授做了破译MD5、HAVAL-128、 MD4和RIPEMD算法的报告，公布了MD系列算法的破解结果。2009年，冯登国、谢涛二人利用差分攻击，将MD5的碰撞算法复杂度从王小云的2^42进一步降低到2^21，极端情况下甚至可以降低至2^10。仅仅2^21的复杂度意味着即便是在2008年的计算机上，也只要几秒便可以找到一对碰撞。Md5已老， 在安全性要求较高的场合，不建议使用。
+</code></pre><h3 id="SHA1"><a href="#SHA1" class="headerlink" title="SHA1"></a>SHA1</h3><pre><code>全名： 安全哈希算法（Secure Hash Algorithm）输出： 160bit
+与Md5比较
+相同点：因为二者均由MD4导出，SHA-1和MD5彼此很相似。相应的，他们的强度和其他特性也是相
+似。不同点：1. 对强行攻击的安全性：最显著和最重要的区别是SHA-1摘要比MD5摘要长32 位。使
+用强行技术，产生任何一个报文使其摘要等于给定报摘要的难度对MD5是2^128数量级的操作，而对
+SHA-1则是2^160数量级的操作。这样，SHA-1对强行攻击有更大的强度。2. 对密码分析的安全性：
+由于MD5的设计，易受密码分析的攻击，SHA-1显得不易受这样的攻击。3. 速度：在相同的硬件上，
+SHA-1的运行速度比MD5慢。    
+</code></pre><h3 id="加盐"><a href="#加盐" class="headerlink" title="加盐"></a>加盐</h3><pre><code>所谓加盐， 就是在原本需要加密的信息基础上，糅入其它内容salt。签名的生成就是一次加盐。
+</code></pre><h3 id="对称加密"><a href="#对称加密" class="headerlink" title="对称加密"></a>对称加密</h3><pre><code>本系统使用对称加密对用户密码进行加密以及生成token字符串。
+</code></pre><h3 id="AuthCode加密"><a href="#AuthCode加密" class="headerlink" title="AuthCode加密"></a>AuthCode加密</h3><pre><code>AuthCode是康盛科技发明的加密方式， 开源产品Discuz的密码是用这个算法进行加密。但是有点遗憾，这个函数所有权属于康盛创想，并不能自由使用的。不知使用是否有风险？？
+</code></pre><h3 id="AES加密"><a href="#AES加密" class="headerlink" title="AES加密"></a>AES加密</h3><pre><code>高级加密标准（英语：Advanced Encryption Standard，缩写：AES），在密码学中又称
+Rijndael加密法，是美国联邦政府采用的一种区块加密标准。这个标准用来替代原先的DES，已经被
+多方分析且广为全世界所使用。    
+</code></pre><h3 id="非对称加密"><a href="#非对称加密" class="headerlink" title="非对称加密"></a>非对称加密</h3><pre><code>RSA是目前最有影响力的公钥加密算法，它能够抵抗到目前为止已知的绝大多数密码攻击，已被ISO推荐为公钥数据加密标准。RSA的安全基于大数分解的难度。其公钥和私钥是一对大素数（100到200位十进制数或更大）的函数。从一个公钥和密文恢复出明文的难度，等价于分解两个大素数之积（这是公认的数学难题）。
+
+算法描述：
+（1）选择一对不同的、足够大的素数p，q。
+（2）计算n=pq。
+（3）计算f(n)=(p-1)(q-1)，同时对p, q严加保密，不让任何人知道。
+（4）找一个与f(n)互质的数e（公钥指数），且1（5）计算d（私钥指数），使得de≡1 mod f(n)。这个公式也可以表达为d ≡e-1 mod f(n)注，≡是数论中表示同余的符号。
+（6）公钥KU=(e,n)，私钥KR=(d,n)。
+（7）加密时，先将明文变换成0至n-1的一个整数M。若明文较长，可先分割成适当的组，然后再进行交换。设密文为C，则加密过程为：
+</code></pre><blockquote>
+<p>来源： iOS大全</p>
+<p> <a href="http://www.jianshu.com/p/2927ca2b3719" target="_blank" rel="external">http://www.jianshu.com/p/2927ca2b3719</a></p>
+</blockquote>
+
+      
+    </div>
+    
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2016/03/29/charles中如何对https抓包/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">charles中如何对https抓包</div>
+      <strong class="article-nav-caption">></strong>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+<div class="share_jia">
+	<!-- JiaThis Button BEGIN -->
+	<div class="jiathis_style">
+		<span class="jiathis_txt">Share to: &nbsp; </span>
+		<a class="jiathis_button_facebook"></a> 
+    <a class="jiathis_button_twitter"></a>
+    <a class="jiathis_button_plus"></a> 
+    <a class="jiathis_button_tsina"></a>
+		<a class="jiathis_button_cqq"></a>
+		<a class="jiathis_button_douban"></a>
+		<a class="jiathis_button_weixin"></a>
+		<a class="jiathis_button_tumblr"></a>
+    <a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jtico jtico_jiathis" target="_blank"></a>
+	</div>
+	<script type="text/javascript" src="http://v3.jiathis.com/code/jia.js?uid=1405949716054953" charset="utf-8"></script>
+	<!-- JiaThis Button END -->
+</div>
+
+
+
+
+
+
+<div class="duoshuo">
+	<!-- 多说评论框 start -->
+	<div class="ds-thread" data-thread-key="iOS-RSA的网络安全模型、iOS签名机制总结、登录模块安全机制" data-title="iOS RSA的网络安全模型、iOS签名机制总结、登录模块安全机制" data-url="http://rocklong.github.io/2016/03/30/iOS-RSA的网络安全模型、iOS签名机制总结、登录模块安全机制/"></div>
+	<!-- 多说评论框 end -->
+	<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+	<script type="text/javascript">
+	var duoshuoQuery = {short_name:"true"};
+	(function() {
+		var ds = document.createElement('script');
+		ds.type = 'text/javascript';ds.async = true;
+		ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+		ds.charset = 'UTF-8';
+		(document.getElementsByTagName('head')[0] 
+		 || document.getElementsByTagName('body')[0]).appendChild(ds);
+	})();
+	</script>
+	<!-- 多说公共JS代码 end -->
+</div>
+
+
+
+
+</div>
+      <footer id="footer">
+  <div class="outer">
+    <div id="footer-info">
+    	<div class="footer-left">
+    		&copy; 2016 Rock
+    	</div>
+      	<div class="footer-right">
+      		<a href="http://hexo.io/" target="_blank">Hexo</a>  Theme <a href="https://github.com/litten/hexo-theme-yilia" target="_blank">Yilia</a> by Litten
+      	</div>
+    </div>
+  </div>
+</footer>
+    </div>
+    
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+
+
+<script>
+	var yiliaConfig = {
+		fancybox: true,
+		mathjax: true,
+		animate: true,
+		isHome: false,
+		isPost: true,
+		isArchive: false,
+		isTag: false,
+		isCategory: false,
+		open_in_new: false
+	}
+</script>
+<script src="http://7.url.cn/edu/jslib/comb/require-2.1.6,jquery-1.9.1.min.js"></script>
+<script src="/js/main.js"></script>
+
+
+
+
+
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+    tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+        processEscapes: true,
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+    }
+});
+
+MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i=0; i < all.length; i += 1) {
+        all[i].SourceElement().parentNode.className += ' has-jax';                 
+    }       
+});
+</script>
+
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+  </div>
+</body>
+</html>
