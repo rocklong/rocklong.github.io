@@ -4,48 +4,27 @@
   <meta charset="utf-8">
   
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
-  <title>iOS 各种底层实现的原理 | 海龙 | 博客</title>
+  <title>布隆过滤器(Bloom Filter)详解实现对账机制 | 海龙 | 博客</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="KVO 内部实现原理
-
- 1.KVO 是基于runtime机制实现的.
-
-2. 当某个类的对象第一次被观察时,系统就会在运行期动态的创建该类的一个派生类
-
-,在这个派生类中重写基类中任何被观察属性的setter方法; 派生类在被重写的setter方法中
-
-实现真正的通知机制 (Person-&amp;gt;NSKVONotifying_Person)
-2 . __weak 内部原理
- (1).从weak">
+  <meta name="description" content="客户端和服务器端对账机制
+优点: 查询提高了和传输大小变小，适合小数据对账
+缺点: 数据量大的情况下会产生一定的误差
+参考文档：http://www.cnblogs.com/haippy/archive/2012/07/13/2590351.html">
 <meta property="og:type" content="article">
-<meta property="og:title" content="iOS 各种底层实现的原理">
-<meta property="og:url" content="http://rocklong.github.io/2016/03/11/iOS-各种底层实现的原理/index.html">
+<meta property="og:title" content="布隆过滤器(Bloom Filter)详解实现对账机制">
+<meta property="og:url" content="http://rocklong.github.io/2016/03/31/布隆过滤器-Bloom-Filter-详解实现对账机制/index.html">
 <meta property="og:site_name" content="海龙 | 博客">
-<meta property="og:description" content="KVO 内部实现原理
-
- 1.KVO 是基于runtime机制实现的.
-
-2. 当某个类的对象第一次被观察时,系统就会在运行期动态的创建该类的一个派生类
-
-,在这个派生类中重写基类中任何被观察属性的setter方法; 派生类在被重写的setter方法中
-
-实现真正的通知机制 (Person-&amp;gt;NSKVONotifying_Person)
-2 . __weak 内部原理
- (1).从weak">
-<meta property="og:updated_time" content="2016-03-13T04:51:47.000Z">
+<meta property="og:description" content="客户端和服务器端对账机制
+优点: 查询提高了和传输大小变小，适合小数据对账
+缺点: 数据量大的情况下会产生一定的误差
+参考文档：http://www.cnblogs.com/haippy/archive/2012/07/13/2590351.html">
+<meta property="og:updated_time" content="2016-03-31T07:31:11.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="iOS 各种底层实现的原理">
-<meta name="twitter:description" content="KVO 内部实现原理
-
- 1.KVO 是基于runtime机制实现的.
-
-2. 当某个类的对象第一次被观察时,系统就会在运行期动态的创建该类的一个派生类
-
-,在这个派生类中重写基类中任何被观察属性的setter方法; 派生类在被重写的setter方法中
-
-实现真正的通知机制 (Person-&amp;gt;NSKVONotifying_Person)
-2 . __weak 内部原理
- (1).从weak">
+<meta name="twitter:title" content="布隆过滤器(Bloom Filter)详解实现对账机制">
+<meta name="twitter:description" content="客户端和服务器端对账机制
+优点: 查询提高了和传输大小变小，适合小数据对账
+缺点: 数据量大的情况下会产生一定的误差
+参考文档：http://www.cnblogs.com/haippy/archive/2012/07/13/2590351.html">
   
     <link rel="alternative" href="/atom.xml" title="海龙 | 博客" type="application/atom+xml">
   
@@ -231,11 +210,11 @@
 	</div>
 </nav>
 
-      <div class="body-wrap"><article id="post-iOS-各种底层实现的原理" class="article article-type-post" itemscope itemprop="blogPost">
+      <div class="body-wrap"><article id="post-布隆过滤器-Bloom-Filter-详解实现对账机制" class="article article-type-post" itemscope itemprop="blogPost">
   
     <div class="article-meta">
-      <a href="/2016/03/11/iOS-各种底层实现的原理/" class="article-date">
-  	<time datetime="2016-03-11T09:58:18.000Z" itemprop="datePublished">2016-03-11</time>
+      <a href="/2016/03/31/布隆过滤器-Bloom-Filter-详解实现对账机制/" class="article-date">
+  	<time datetime="2016-03-31T07:27:49.000Z" itemprop="datePublished">2016-03-31</time>
 </a>
     </div>
   
@@ -248,7 +227,7 @@
         
   
     <h1 class="article-title" itemprop="name">
-      iOS 各种底层实现的原理
+      布隆过滤器(Bloom Filter)详解实现对账机制
     </h1>
   
 
@@ -264,66 +243,11 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <ol>
-<li>KVO 内部实现原理</li>
-</ol>
-<pre><code> 1.KVO 是基于runtime机制实现的.
-
-2. 当某个类的对象第一次被观察时,系统就会在运行期动态的创建该类的一个派生类
-
-,在这个派生类中重写基类中任何被观察属性的setter方法; 派生类在被重写的setter方法中
-
-实现真正的通知机制 (Person-&gt;NSKVONotifying_Person)
-</code></pre><p>2 . __weak 内部原理</p>
-<pre><code> (1).从weak 表中获取废弃对象的地址为键值的记录。
-
-（2).将包含在记录中的所有附有__weak 修饰符变量的地址，赋值为nil。
-
-（3).从weak 表中删除该记录。
-
-（4).从引用计数表中删除废弃对象的地址为键值的记录。
-</code></pre><p>3.block 的哪些事</p>
-<p> 1.Block和函数的相似性：（1）可以保存代码（2）有返回值（3）有形参（4）调用方式一样。</p>
-<p> 2.加__block 就可以修改外部变量的值，其本质就是传值（不加）和传址（加）的区别  </p>
-<p> 3.Block 分：栈block，全局block，堆block，分别对应</p>
-<ul>
-<li>_NSConcretStackBlock</li>
-<li>_NSConcretGlobalBlock</li>
-<li><p>_NSConcretMallocBlock</p>
-<p>栈block:</p>
-<p>在ARC下会自动添加 autorelease 会自动copy到堆上，有一种场景是不会给自动添加copy的</p>
-</li>
-</ul>
-<pre><code>-(id) getBlockArray {  
-        int val = 10;   
-        return [NSArray arrayWithObjects:  
-    ^{NSLog(@&quot;blk0:%d&quot;,val);},  
-    ^{NSLog(@&quot;blk1:%d&quot;,val);}, nil];  
-}   
-id obj = getBlockArray();  
-typedef void (^blk_t)(void);  
-blk_t blk = (blk_t){obj objectAtIndex:0};  
-blk(); 
-
-正确改法：
--(id) getBlockArray {  
-        int val =10;  
-        return [NSArray arrayWithObjects:[^{NSLog(@&quot;blk0:%d&quot;,val);} copy],
-                 [^{NSLog(@&quot;blk1:%d&quot;,val);} copy],nil];
-
-}  
-</code></pre><p>这段代码在最后一行blk()会异常，因为数组中的block是栈上的。因为val是栈上的。解决办法就是调用    copy方法。这种场景，ARC也不会为你添加copy，因为ARC不确定，采取了保守的措施：不添加copy。所以    ARC下也是会异常退出。</p>
-<p>  注意：</p>
-<ul>
-<li>在栈上调用copy那么复制到堆上</li>
-<li>全局block调用copy什么也不做</li>
-<li><p>在堆上调用block 引用计数增加    </p>
-<p>全局block：</p>
-<p> 定义在函数外面的block是global类型的<br> 定义在函数内部的block，但是没有捕获任何自动变量，那么它也是全局的  </p>
-</li>
-</ul>
-<p>参考： </p>
-<p>  <a href="http://blog.csdn.net/hherima/article/details/38620175" target="_blank" rel="external">block的内存管理如何验证block在栈上还是在堆上</a>     </p>
+        <h2 id="客户端和服务器端对账机制"><a href="#客户端和服务器端对账机制" class="headerlink" title="客户端和服务器端对账机制"></a>客户端和服务器端对账机制</h2><blockquote>
+<p>优点: 查询提高了和传输大小变小，适合小数据对账</p>
+<p>缺点: 数据量大的情况下会产生一定的误差</p>
+<p>参考文档：<a href="http://www.cnblogs.com/haippy/archive/2012/07/13/2590351.html" target="_blank" rel="external">http://www.cnblogs.com/haippy/archive/2012/07/13/2590351.html</a></p>
+</blockquote>
 
       
     </div>
@@ -333,18 +257,9 @@ blk();
     
 <nav id="article-nav">
   
-    <a href="/2016/03/13/iOS-常见问题/" id="article-nav-newer" class="article-nav-link-wrap">
-      <strong class="article-nav-caption"><</strong>
-      <div class="article-nav-title">
-        
-          iOS 常见问题
-        
-      </div>
-    </a>
   
-  
-    <a href="/2016/03/10/Hexo-3-0-部署到github遇到的坑/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">Hexo 3.0 部署到github遇到的坑</div>
+    <a href="/2016/03/31/聊天表情处理机制/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">聊天表情处理机制</div>
       <strong class="article-nav-caption">></strong>
     </a>
   
@@ -379,7 +294,7 @@ blk();
 
 <div class="duoshuo">
 	<!-- 多说评论框 start -->
-	<div class="ds-thread" data-thread-key="iOS-各种底层实现的原理" data-title="iOS 各种底层实现的原理" data-url="http://rocklong.github.io/2016/03/11/iOS-各种底层实现的原理/"></div>
+	<div class="ds-thread" data-thread-key="布隆过滤器-Bloom-Filter-详解实现对账机制" data-title="布隆过滤器(Bloom Filter)详解实现对账机制" data-url="http://rocklong.github.io/2016/03/31/布隆过滤器-Bloom-Filter-详解实现对账机制/"></div>
 	<!-- 多说评论框 end -->
 	<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
 	<script type="text/javascript">
