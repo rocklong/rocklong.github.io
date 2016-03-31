@@ -4,81 +4,24 @@
   <meta charset="utf-8">
   
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
-  <title>通讯录相关同步机制 | 海龙 | 博客</title>
+  <title>聊天表情处理机制 | 海龙 | 博客</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="通讯录模块包含
-单位通讯录
-群组
-好友
-新朋友
-群组
-信息服务号（和应用相关）
-
-单位通讯录
-
-
-涉及数据量大客户端存储效率的问题
-
-本地存储数据安全（数据库加密）
-
-涉及查看人员的权限问题（一些保密信息的问题）
-
-涉及人员部门和公司的变更客户端如何更新（多岗/换岗，一个人多个公司）
-
-用户基本信息更新和用户头像更新（需明确用户头像的url是否是变化）
-
-触发同步的时机(涉及页面的刷新，换终端，从">
+  <meta name="description" content="聊天表情处理机制
+1.字符串和表情符号做映射。落地发送出去的是字符串的文本消息，在显示的时间进行映射，来显示表情符号。和处理文本消息是一样的。
+2.表情文字和表情图片进行映射。最后落地的是图片，不建议这样使用。">
 <meta property="og:type" content="article">
-<meta property="og:title" content="通讯录相关同步机制">
-<meta property="og:url" content="http://rocklong.github.io/2016/03/30/通讯录相关同步机制/index.html">
+<meta property="og:title" content="聊天表情处理机制">
+<meta property="og:url" content="http://rocklong.github.io/2016/03/31/聊天表情处理机制/index.html">
 <meta property="og:site_name" content="海龙 | 博客">
-<meta property="og:description" content="通讯录模块包含
-单位通讯录
-群组
-好友
-新朋友
-群组
-信息服务号（和应用相关）
-
-单位通讯录
-
-
-涉及数据量大客户端存储效率的问题
-
-本地存储数据安全（数据库加密）
-
-涉及查看人员的权限问题（一些保密信息的问题）
-
-涉及人员部门和公司的变更客户端如何更新（多岗/换岗，一个人多个公司）
-
-用户基本信息更新和用户头像更新（需明确用户头像的url是否是变化）
-
-触发同步的时机(涉及页面的刷新，换终端，从">
-<meta property="og:updated_time" content="2016-03-30T08:48:00.000Z">
+<meta property="og:description" content="聊天表情处理机制
+1.字符串和表情符号做映射。落地发送出去的是字符串的文本消息，在显示的时间进行映射，来显示表情符号。和处理文本消息是一样的。
+2.表情文字和表情图片进行映射。最后落地的是图片，不建议这样使用。">
+<meta property="og:updated_time" content="2016-03-31T01:45:39.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="通讯录相关同步机制">
-<meta name="twitter:description" content="通讯录模块包含
-单位通讯录
-群组
-好友
-新朋友
-群组
-信息服务号（和应用相关）
-
-单位通讯录
-
-
-涉及数据量大客户端存储效率的问题
-
-本地存储数据安全（数据库加密）
-
-涉及查看人员的权限问题（一些保密信息的问题）
-
-涉及人员部门和公司的变更客户端如何更新（多岗/换岗，一个人多个公司）
-
-用户基本信息更新和用户头像更新（需明确用户头像的url是否是变化）
-
-触发同步的时机(涉及页面的刷新，换终端，从">
+<meta name="twitter:title" content="聊天表情处理机制">
+<meta name="twitter:description" content="聊天表情处理机制
+1.字符串和表情符号做映射。落地发送出去的是字符串的文本消息，在显示的时间进行映射，来显示表情符号。和处理文本消息是一样的。
+2.表情文字和表情图片进行映射。最后落地的是图片，不建议这样使用。">
   
     <link rel="alternative" href="/atom.xml" title="海龙 | 博客" type="application/atom+xml">
   
@@ -264,11 +207,11 @@
 	</div>
 </nav>
 
-      <div class="body-wrap"><article id="post-通讯录相关同步机制" class="article article-type-post" itemscope itemprop="blogPost">
+      <div class="body-wrap"><article id="post-聊天表情处理机制" class="article article-type-post" itemscope itemprop="blogPost">
   
     <div class="article-meta">
-      <a href="/2016/03/30/通讯录相关同步机制/" class="article-date">
-  	<time datetime="2016-03-30T07:05:50.000Z" itemprop="datePublished">2016-03-30</time>
+      <a href="/2016/03/31/聊天表情处理机制/" class="article-date">
+  	<time datetime="2016-03-31T01:39:35.000Z" itemprop="datePublished">2016-03-31</time>
 </a>
     </div>
   
@@ -281,7 +224,7 @@
         
   
     <h1 class="article-title" itemprop="name">
-      通讯录相关同步机制
+      聊天表情处理机制
     </h1>
   
 
@@ -297,59 +240,9 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h3 id="通讯录模块包含"><a href="#通讯录模块包含" class="headerlink" title="通讯录模块包含"></a>通讯录模块包含</h3><blockquote>
-<p>单位通讯录</p>
-<p>群组</p>
-<p>好友</p>
-<p>新朋友</p>
-<p>群组</p>
-<p>信息服务号（和应用相关）</p>
-</blockquote>
-<p><strong>单位通讯录</strong></p>
-<blockquote>
-<ol>
-<li><p>涉及数据量大客户端存储效率的问题</p>
-</li>
-<li><p>本地存储数据安全（数据库加密）</p>
-</li>
-<li><p>涉及查看人员的权限问题（一些保密信息的问题）</p>
-</li>
-<li><p>涉及人员部门和公司的变更客户端如何更新（多岗/换岗，一个人多个公司）</p>
-</li>
-<li><p>用户基本信息更新和用户头像更新（需明确用户头像的url是否是变化）</p>
-</li>
-<li><p>触发同步的时机(涉及页面的刷新，换终端，从服务器端添加人员)</p>
-</li>
-</ol>
-</blockquote>
-<p><strong>好友/新朋友</strong></p>
-<blockquote>
-<ol>
-<li><p>好友列表持久化到本地的时机</p>
-</li>
-<li><p>好友信息的更新机制</p>
-</li>
-</ol>
-</blockquote>
-<p><strong>群组</strong></p>
-<blockquote>
-<ol>
-<li><p>群组列表取增量的时机</p>
-</li>
-<li><p>单个群组设置的更新机制</p>
-</li>
-<li><p>群组头像的更新机制 （群组头像合成的时机，删人加人是否要更新群组的头像）</p>
-</li>
-</ol>
-</blockquote>
-<p><strong>信息服务号</strong></p>
-<blockquote>
-<ol>
-<li><p>应用列表持久化本地的时机</p>
-</li>
-<li><p>单个应用设置变更客户端如何更新（应用的菜单信息的变更） </p>
-</li>
-</ol>
+        <h2 id="聊天表情处理机制"><a href="#聊天表情处理机制" class="headerlink" title="聊天表情处理机制"></a>聊天表情处理机制</h2><blockquote>
+<p>1.字符串和表情符号做映射。落地发送出去的是字符串的文本消息，在显示的时间进行映射，来显示表情符号。和处理文本消息是一样的。</p>
+<p>2.表情文字和表情图片进行映射。最后落地的是图片，不建议这样使用。</p>
 </blockquote>
 
       
@@ -360,18 +253,9 @@
     
 <nav id="article-nav">
   
-    <a href="/2016/03/31/聊天表情处理机制/" id="article-nav-newer" class="article-nav-link-wrap">
-      <strong class="article-nav-caption"><</strong>
-      <div class="article-nav-title">
-        
-          聊天表情处理机制
-        
-      </div>
-    </a>
   
-  
-    <a href="/2016/03/30/iOS-RSA的网络安全模型、iOS签名机制总结、登录模块安全机制/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">iOS RSA的网络安全模型、登录模块安全机制</div>
+    <a href="/2016/03/30/通讯录相关同步机制/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">通讯录相关同步机制</div>
       <strong class="article-nav-caption">></strong>
     </a>
   
@@ -406,7 +290,7 @@
 
 <div class="duoshuo">
 	<!-- 多说评论框 start -->
-	<div class="ds-thread" data-thread-key="通讯录相关同步机制" data-title="通讯录相关同步机制" data-url="http://rocklong.github.io/2016/03/30/通讯录相关同步机制/"></div>
+	<div class="ds-thread" data-thread-key="聊天表情处理机制" data-title="聊天表情处理机制" data-url="http://rocklong.github.io/2016/03/31/聊天表情处理机制/"></div>
 	<!-- 多说评论框 end -->
 	<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
 	<script type="text/javascript">
