@@ -79,7 +79,7 @@
 						<li>Links</li>
 						
 						
-						<li>A propos</li>
+						<li>Über</li>
 						
 					</ul>
 				</div>
@@ -289,7 +289,14 @@
 <p>当提交一个从数据库中删除数据的事务时，数据库文件不改变大小。未使用的文件页被标记并在以后的添加操作中再次使用。这种情况下使用VACUUM命令释放删除后留下的空白空间。<br>当开启auto-vacuum，并提交一个从数据库中删除数据的事务时，数据库文件自动收缩，（VACUUM命令在auto-vacuum开启的数据库中不起作用）。数据库会在内部存储一些信息以便支持这一功能，这使得数据库文件比不开启该选项时稍微大一些</p>
 <p>解决办法：定期执行 PRAGMA auto_vacuum = 1 和 VACUUM 命令即可</p>
 <p>参考链接：<a href="http://blog.csdn.net/cangchen/article/details/44063497" target="_blank" rel="external">http://blog.csdn.net/cangchen/article/details/44063497</a> </p>
-<h3 id="未完待续"><a href="#未完待续" class="headerlink" title="未完待续"></a>未完待续</h3></blockquote>
+</blockquote>
+<h2 id="2-针对批量插入使用事务和replace-into"><a href="#2-针对批量插入使用事务和replace-into" class="headerlink" title="2.针对批量插入使用事务和replace into"></a>2.针对批量插入使用事务和replace into</h2><blockquote>
+<p>经过测试对10000条用户数据执行批量写入的操作（前提表都是空的），不使用事务耗时是40.5682709813118， 相当于执行了10000次的文件的打开，写入和关闭。<br>使用事务之后耗时是：0.5029950141906738 得到了明显的提升。</p>
+<p>使用replace into 实际是执行了delete ＋ insert 操作 替换了update 在使用的过程中需要保证数据字段的完整性，如果缺省字段会在存的过程也会被存成空的覆盖掉以前的数据</p>
+<p>参考文档：事务相关<a href="http://blog.devtang.com/2012/04/22/use-fmdb/" target="_blank" rel="external">http://blog.devtang.com/2012/04/22/use-fmdb/</a></p>
+<p>replace into 相关<a href="http://blog.csdn.net/zhangjg_blog/article/details/23267761" target="_blank" rel="external">http://blog.csdn.net/zhangjg_blog/article/details/23267761</a></p>
+<p>###未完待序</p>
+</blockquote>
 
       
     </div>
