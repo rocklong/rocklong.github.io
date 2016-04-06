@@ -292,7 +292,9 @@
 </blockquote>
 <h2 id="2-针对批量插入使用事务和replace-into"><a href="#2-针对批量插入使用事务和replace-into" class="headerlink" title="2.针对批量插入使用事务和replace into"></a>2.针对批量插入使用事务和replace into</h2><blockquote>
 <p>经过测试对10000条用户数据执行批量写入的操作（前提表都是空的），不使用事务耗时是40.5682709813118， 相当于执行了10000次的文件的打开，写入和关闭。<br>使用事务之后耗时是：0.5029950141906738 得到了明显的提升。</p>
+<hr>
 <p>使用replace into 实际是执行了delete ＋ insert 操作 替换了update 在使用的过程中需要保证数据字段的完整性，如果缺省字段会在存的过程也会被存成空的覆盖掉以前的数据</p>
+<hr>
 <p>参考文档：事务相关<a href="http://blog.devtang.com/2012/04/22/use-fmdb/" target="_blank" rel="external">http://blog.devtang.com/2012/04/22/use-fmdb/</a></p>
 <p>replace into 相关<a href="http://blog.csdn.net/zhangjg_blog/article/details/23267761" target="_blank" rel="external">http://blog.csdn.net/zhangjg_blog/article/details/23267761</a></p>
 <p>###未完待序</p>
